@@ -33,5 +33,5 @@ if __name__ == '__main__':
         input_tensor = input_tensor.view(input_tensor.shape[0], -1) if MODEL == 'MLP' else input_tensor
         classification_results = model(input_tensor)
         nb_correct_answers += torch.eq(classification_results.argmax(), label).item()
-    print("Average acc.: {} %.".format(nb_correct_answers / len(data_loader) * 100))
+    print("Average acc.: {} %.".format(nb_correct_answers / len(dataset) * 100))
 
