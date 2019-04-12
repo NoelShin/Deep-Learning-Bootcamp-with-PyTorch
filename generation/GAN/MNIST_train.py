@@ -13,7 +13,7 @@ if __name__ == '__main__':
     import torch
     from torch.utils.data import DataLoader
     from torchvision.datasets import MNIST
-    from torchvision.transforms import Compose, Normalize, ToTensor
+    from torchvision.transforms import Compose, ToTensor
     from torchvision.utils import save_image
     from MNIST_models import Generator, Discriminator
     import datetime
@@ -30,12 +30,11 @@ if __name__ == '__main__':
     os.makedirs(IMAGE_DIR, exist_ok=True)
     os.makedirs(MODEL_DIR, exist_ok=True)
 
-    transform = Compose([ToTensor(), Normalize(mean=[0.5], std=[0.5])])
-    dataset = MNIST(root='./datasets', train=True, transform=transform, download=True)
+    dataset = MNIST(root='./datasets', train=True, transform=ToTensor(), download=True)
     data_loader = DataLoader(dataset=dataset, batch_size=BATCH_SIZE, shuffle=True, num_workers=1)
 
-    D = Discriminator().apply(init_weights)
-    G = Generator().apply(init_weights)
+    D = Discriminator()
+    G = Generator()
     print(D)
     print(G)
 
