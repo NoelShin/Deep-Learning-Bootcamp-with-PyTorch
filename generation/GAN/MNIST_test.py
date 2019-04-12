@@ -4,7 +4,7 @@ if __name__ == '__main__':
     import torch
     from torch.utils.data import DataLoader
     from torchvision.datasets import MNIST
-    from torchvision.transforms import Compose, Normalize, ToTensor
+    from torchvision.transforms import ToTensor
     from torchvision.utils import save_image
     from MNIST_models import Generator
     import time
@@ -17,8 +17,7 @@ if __name__ == '__main__':
     MODEL_DIR = './GAN/checkpoints/MNIST/Model'
     os.makedirs(IMAGE_DIR, exist_ok=True)
 
-    transforms = Compose([ToTensor(), Normalize(mean=[0.5], std=[0.5])])
-    dataset = MNIST(root='./datasets', train=False, transform=transforms, download=True)
+    dataset = MNIST(root='./datasets', train=False, transform=ToTensor(), download=True)
     data_loader = DataLoader(dataset=dataset, batch_size=32, num_workers=0, shuffle=False)
 
     G = Generator()
