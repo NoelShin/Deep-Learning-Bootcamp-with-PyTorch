@@ -28,20 +28,20 @@ class Generator(nn.Module):
         act = nn.ReLU(inplace=True)
         norm = nn.BatchNorm2d
 
-        if dataset_name == 'CIFAR10':  # Input shape 3x32x32
+        if dataset_name == 'CIFAR10':  # Output shape 3x32x32
             model = [nn.Linear(100, 512 * 4 * 4), View([512, 4, 4]), norm(512), act]  # 4x4
             model += [nn.ConvTranspose2d(512, 256, 5, stride=2, padding=2, output_padding=1), norm(256), act]  # 8x8
             model += [nn.ConvTranspose2d(256, 128, 5, stride=2, padding=2, output_padding=1), norm(128), act]  # 16x16
             model += [nn.ConvTranspose2d(128, 3, 5, stride=2, padding=2, output_padding=1), nn.Tanh()]  # 32x32
 
-        elif dataset_name == 'LSUN':  # Input shape 3x64x64
+        elif dataset_name == 'LSUN':  # Output shape 3x64x64
             model = [nn.Linear(100, 1024 * 4 * 4), View([1024, 4, 4]), norm(1024), act]  # 4x4
             model += [nn.ConvTranspose2d(1024, 512, 5, stride=2, padding=2, output_padding=1), norm(512), act]  # 8x8
             model += [nn.ConvTranspose2d(512, 256, 5, stride=2, padding=2, output_padding=1), norm(256), act]  # 16x16
             model += [nn.ConvTranspose2d(256, 128, 5, stride=2, padding=2, output_padding=1), norm(128), act]  # 32x32
             model += [nn.ConvTranspose2d(128, 3, 5, stride=2, padding=2, output_padding=1), nn.Tanh()]  # 64x64
 
-        elif dataset_name == 'MNIST':  # Input shape 1x28x28
+        elif dataset_name == 'MNIST':  # Output shape 1x28x28
             model = [nn.Linear(100, 256 * 4 * 4), View([256, 4, 4]), norm(256), act]  # 4x4
             model += [nn.ConvTranspose2d(256, 128, 5, stride=2, padding=2), norm(128), act]  # 7x7
             model += [nn.ConvTranspose2d(128, 64, 5, stride=2, padding=2, output_padding=1), norm(64), act]  # 14x14
