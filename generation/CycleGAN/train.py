@@ -34,7 +34,7 @@ if __name__ == '__main__':
         opt_test = TestOption().parse()
         dir_image_test = opt.dir_image_test
 
-    device = torch.device('gpu:0' if torch.cuda.is_available() else 'cpu:0')
+    device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu:0')
 
     dataset = CustomDataset(opt)
     data_loader = DataLoader(dataset=dataset, batch_size=batch_size, num_workers=num_workers, shuffle=True)
@@ -43,6 +43,8 @@ if __name__ == '__main__':
     D_B = Discriminator(opt).apply(weights_init).to(device)
     G_A = Generator(opt).apply(weights_init).to(device)
     G_B = Generator(opt).apply(weights_init).to(device)
+    print(D_A)
+    print(G_A)
 
     optim_D = torch.optim.Adam(list(D_A.parameters()) + list(D_B.parameters()), lr=lr, betas=(beta_1, beta_2))
     optim_G = torch.optim.Adam(list(G_A.parameters()) + list(G_B.parameters()), lr=lr, betas=(beta_1, beta_2))
@@ -67,15 +69,14 @@ if __name__ == '__main__':
 
             val_fake_B = D_B(image_buffer_B(fake_B.detach()))
             val_real_B = D_B(B)
-
             val_fake_A = D_A(image_buffer_A(fake_A.detach()))
             val_real_A = D_A(A)
 
             loss_D = 0
             loss_D += loss_GAN(val_fake_B, torch.zeros_like(val_fake_B).to(device))
             loss_D += loss_GAN(val_fake_A, torch.zeros_like(val_fake_A).to(device))
-            loss_D += loss_GAN(val_real_A, torch.ones_like(val_real_A).to(device))
             loss_D += loss_GAN(val_real_B, torch.ones_like(val_real_B).to(device))
+            loss_D += loss_GAN(val_real_A, torch.ones_like(val_real_A).to(device))
             loss_D *= 0.5
 
             optim_D.zero_grad()
@@ -116,7 +117,7 @@ if __name__ == '__main__':
                     p.requires_grad_(False)
                 for p in D_A.parameters():
                     p.requires_grad_(False)
-                for p in D_B.parameters(False):
+                for p in D_B.parameters():
                     p.requires_grad_(False)
 
                 dataset_test = CustomDataset(opt_test)
@@ -129,8 +130,8 @@ if __name__ == '__main__':
                     fake_B = G_A(A_val)
                     # fake_A = G_B(B_val)
 
-                    save_image(fake_A.detach(), join(dir_image_test, str(iter_total),
-                                                     '{}_fake_A.png'.format(iter_total)))
+                    save_image(fake_B.detach(), join(dir_image_test, str(iter_total),
+                                                     '{}_fake_B.png'.format(iter_total)), nrow=1, normalize=True)
                     # save_image(fake_B.detach(), join(dir_image_test, str(iter_total),
                     #                                  '{}_fake_B.png'.format(iter_total)))
 
@@ -140,7 +141,7 @@ if __name__ == '__main__':
                     p.requires_grad_(True)
                 for p in D_A.parameters():
                     p.requires_grad_(True)
-                for p in D_B.parameters(True):
+                for p in D_B.parameters():
                     p.requires_grad_(True)
 
         if (epoch + 1) % epoch_save == 0:
