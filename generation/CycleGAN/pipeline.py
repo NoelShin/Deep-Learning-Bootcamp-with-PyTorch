@@ -38,24 +38,31 @@ class CustomDataset(Dataset):
 
     def __getitem__(self, index):
         transforms = list()
+
         if self.dataset_name == 'facades':
             transforms += [Resize((self.load_size, self.load_size), Image.BILINEAR)]
             transforms += [RandomHorizontalFlip()] if random.random() > 0.5 else []
             transforms += [ToTensor(), Normalize(mean=[0.5, 0.5, 0.5], std=[0.5, 0.5, 0.5])]
+
+            image_input = Image.open(join(self.dir_input, self.list_paths_input[index])).convert('RGB')
+
+            if self.mode == 'train' or self.mode == 'val':
+                index_random = random.randint(0, len(self.list_paths_real) - 1)
+                image_real = Image.open(join(self.dir_real, self.list_paths_real[index_random])).convert('RGB')
+
         else:
             transforms += [Resize((self.load_size, self.load_size), Image.BILINEAR)]
             transforms += [ToTensor(), Normalize(mean=[0.5], std=[0.5])]
+
+            image_input = Image.open(join(self.dir_input, self.list_paths_input[index])).convert('L')
+
+            if self.mode == 'train' or self.mode == 'val':
+                index_random = random.randint(0, len(self.list_paths_real) - 1)
+                image_real = Image.open(join(self.dir_real, self.list_paths_real[index_random])).convert('L')
+
         transforms = Compose(transforms)
-
-        image_input = Image.open(join(self.dir_input, self.list_paths_input[index])).convert('RGB')
         input = transforms(image_input)
-
-        if self.mode == 'train' or self.mode == 'val':
-            index_random = random.randint(0, len(self.list_paths_real) - 1)
-            image_real = Image.open(join(self.dir_real, self.list_paths_real[index_random])).convert('RGB')
-            real = transforms(image_real)
-        else:
-            real = 0
+        real = transforms(image_real) if self.mode == 'train' or self.mode == 'val' else 0
 
         return input, real
 
