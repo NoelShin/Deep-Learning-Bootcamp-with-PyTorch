@@ -14,14 +14,15 @@ class BaseOption(object):
         self.args.add_argument('--dir_datasets', type=str, default='./datasets')
         self.args.add_argument('--in_channels', type=int, default=3,
                                help='Number of input channels in the generator.')
-        self.args.add_argument('--out_channels', type=int, default=3,
-                               help='Number of output channels in the generator.')
+        self.args.add_argument('--load_size', type=int, default=256)
         self.args.add_argument('--n_df', type=int, default=64,
                                help='Nb of output channels of the first layer in the discriminator.')
         self.args.add_argument('--n_gf', type=int, default=32,
                                help='Nb of output channels of the first layer in the generator.')
         self.args.add_argument('--n_RB', type=int, default=9, help='Nb of residual blocks in the generator.')
         self.args.add_argument('--n_workers', type=int, default=2, help='Nb of cpu threads to load data.')
+        self.args.add_argument('--out_channels', type=int, default=3,
+                               help='Number of output channels in the generator.')
 
     def parse(self):
         args = self.args.parse_args()
@@ -52,19 +53,19 @@ class TrainOption(BaseOption):
 
         self.args.add_argument('--beta_1', type=float, default=0.5, help='Adam optimizer param.')
         self.args.add_argument('--beta_2', type=float, default=0.999, help='Adam optimizer param.')
-        self.args.add_argument('--iter_display', type=int, default=1, help='frequency you want to see training images'
+        self.args.add_argument('--iter_display', type=int, default=100, help='frequency you want to see training images'
                                                                            'in iteration.')
-        self.args.add_argument('--iter_report', type=int, default=1, help='frequency you want to be reported losses.')
-        self.args.add_argument('--iter_val', type=int, default=1, help='frequency you want to see validation images'
-                                                                        'in iteration.')
+        self.args.add_argument('--iter_report', type=int, default=10, help='frequency you want to be reported losses.')
+        self.args.add_argument('--iter_val', type=int, default=10000, help='frequency you want to see validation images'
+                                                                           'in iteration.')
         self.args.add_argument('--epoch_decay', type=int, default=100, help='epoch where learning rate starts to'
                                                                             ' decay.')
-        self.args.add_argument('--epoch_save', type=int, default=1, help='frequency you want to save models in epoch.')
+        self.args.add_argument('--epoch_save', type=int, default=20, help='frequency you want to save models in epoch.')
         self.args.add_argument('--lambda_cycle', type=int, default=10, help='weight for cycle consistency loss.')
         self.args.add_argument('--lr', type=float, default=2e-4, help='Initial learning rate.')
         self.args.add_argument('--n_buffer_images', type=int, default=50, help='how many images the model stores for'
                                                                                'discriminator updates')
-        self.args.add_argument('--n_epochs', type=int, default=100)
+        self.args.add_argument('--n_epochs', type=int, default=200)
         self.args.add_argument('--val_during_training', action='store_true', default=True)
 
 
