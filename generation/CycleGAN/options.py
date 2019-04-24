@@ -40,7 +40,7 @@ class BaseOption(object):
                 print("-" * 50, 'Options', "-" * 50)
                 for k, v in dict_opt.items():
                     print("{}: {}".format(k, v))
-                    log.write('{}, {}'.format(k, v))
+                    log.write('{}, {}\n'.format(k, v))
                 print("-" * 100)
 
         return args
@@ -56,7 +56,7 @@ class TrainOption(BaseOption):
         self.args.add_argument('--iter_display', type=int, default=100, help='frequency you want to see training images'
                                                                            'in iteration.')
         self.args.add_argument('--iter_report', type=int, default=10, help='frequency you want to be reported losses.')
-        self.args.add_argument('--iter_val', type=int, default=10000, help='frequency you want to see validation images'
+        self.args.add_argument('--iter_val', type=int, default=100, help='frequency you want to see validation images'
                                                                            'in iteration.')
         self.args.add_argument('--epoch_decay', type=int, default=100, help='epoch where learning rate starts to'
                                                                             ' decay.')
