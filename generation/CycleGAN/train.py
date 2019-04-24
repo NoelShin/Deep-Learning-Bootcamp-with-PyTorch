@@ -36,7 +36,7 @@ if __name__ == '__main__':
 
     device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu:0')
 
-    dataset = CustomDataset(opt)
+    dataset = CustomDataset(opt, 'train')
     data_loader = DataLoader(dataset=dataset, batch_size=batch_size, num_workers=num_workers, shuffle=True)
 
     D_A = Discriminator(opt).apply(weights_init).to(device)
@@ -120,20 +120,21 @@ if __name__ == '__main__':
                 for p in D_B.parameters():
                     p.requires_grad_(False)
 
-                dataset_test = CustomDataset(opt_test)
-                data_loader_test = DataLoader(dataset=dataset_test, batch_size=batch_size, num_workers=num_workers)
+                dataset_test = CustomDataset(opt_test, 'val')
+                data_loader_test = DataLoader(dataset=dataset_test, batch_size=batch_size, num_workers=num_workers,
+                                              shuffle=False)
 
-                for A_val, B_val in data_loader_test:
+                for i, (A_val, B_val) in enumerate(data_loader_test):
                     A_val = A_val.to(device)
-                    # B_val = B_val.to(device)
+                    B_val = B_val.to(device)
 
                     fake_B = G_A(A_val)
-                    # fake_A = G_B(B_val)
+                    fake_A = G_B(B_val)
 
                     save_image(fake_B.detach(), join(dir_image_test, str(iter_total),
-                                                     '{}_fake_B.png'.format(iter_total)), nrow=1, normalize=True)
-                    # save_image(fake_B.detach(), join(dir_image_test, str(iter_total),
-                    #                                  '{}_fake_B.png'.format(iter_total)))
+                                                     '{}_fake_B.png'.format(i)), nrow=1, normalize=True)
+                    save_image(fake_A.detach(), join(dir_image_test, str(iter_total),
+                                                     '{}_fake_A.png'.format(i)), nrow=1, normalize=True)
 
                 for p in G_A.parameters():
                     p.requires_grad_(True)
@@ -147,5 +148,7 @@ if __name__ == '__main__':
         if (epoch + 1) % epoch_save == 0:
             torch.save(G_A.state_dict(), join(dir_model, '{}_G_A.pt'.format(epoch + 1)))
             torch.save(G_B.state_dict(), join(dir_model, '{}_G_B.pt'.format(epoch + 1)))
+            torch.save(D_A.state_dict(), join(dir_model, '{}_D_A.pt'.format(epoch + 1)))
+            torch.save(D_B.state_dict(), join(dir_model, '{}_D_B.pt'.format(epoch + 1)))
 
     print(datetime.now() - st)
