@@ -2,7 +2,7 @@ import os
 from os.path import join
 import random
 from torch.utils.data import Dataset
-from torchvision.transforms import Compose, Normalize, RandomHorizontalFlip, ToTensor
+from torchvision.transforms import Compose, Normalize, RandomHorizontalFlip, Resize, ToTensor
 from PIL import Image
 
 
@@ -25,13 +25,16 @@ class CustomDataset(Dataset):
 
         self.dataset_name = opt.dataset_name
         self.is_train = is_train
+        self.load_size = opt.load_size
 
     def __getitem__(self, index):
         transforms = list()
         if self.dataset_name == 'facades':
+            transforms += [Resize((self.load_size, self.load_size), Image.BILINEAR)]
             transforms += [RandomHorizontalFlip()] if random.random() > 0.5 else []
             transforms += [ToTensor(), Normalize(mean=[0.5, 0.5, 0.5], std=[0.5, 0.5, 0.5])]
         else:
+            transforms += [Resize((self.load_size, self.load_size), Image.BILINEAR)]
             transforms += [ToTensor(), Normalize(mean=[0.5], std=[0.5])]
         transforms = Compose(transforms)
 
@@ -52,26 +55,11 @@ class CustomDataset(Dataset):
 
 
 if __name__ == '__main__':
-    from options import TrainOption
-    from torch.utils.data import DataLoader
-    import numpy as np
-    from PIL import Image
-    opt = TrainOption().parse()
-    dataset = CustomDataset(opt)
-    dataloader = DataLoader(dataset=dataset, batch_size=1)
+    dir_image = './datasets/facades/Train/Input'
+    list_paths = os.listdir(dir_image)
+    list_sizes = []
+    for path in list_paths:
+        size = Image.open(os.path.join(dir_image, path)).size
+        print(size)
+        list_sizes.append(size)
 
-    for input, real in dataloader:
-        input = np.array(input[0])
-        real = np.array(real[0])
-
-        input -= -1.
-        input *= 127.5
-        input = input.astype(np.uint8)
-        Image.fromarray(input.transpose(1, 2, 0), mode='RGB').show()
-
-        real -= -1.0
-        real *= 127.5
-        real = real.astype(np.uint8)
-        Image.fromarray(real.transpose(1, 2, 0), mode='RGB').show()
-
-        break
