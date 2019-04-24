@@ -55,7 +55,7 @@ class Generator(nn.Module):
         self.network = nn.Sequential(*network)
 
     def forward(self, x):
-        return x
+        return self.network(x)
 
 
 class ResidualBlock(nn.Module):
