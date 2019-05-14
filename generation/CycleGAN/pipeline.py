@@ -24,6 +24,16 @@ class CustomDataset(Dataset):
             self.list_paths_input, self.list_paths_real = sorted(os.listdir(dir_input)), sorted(os.listdir(dir_real))
             self.dir_input, self.dir_real = dir_input, dir_real
 
+        elif mode == 'val_A2B':
+            dir_input = join(dir_datasets, dataset_name, 'Test', 'A')
+            self.list_paths_input = sorted(os.listdir(dir_input))
+            self.dir_input = dir_input
+
+        elif mode == 'val_B2A':
+            dir_input = join(dir_datasets, dataset_name, 'Test', 'B')
+            self.list_paths_input = sorted(os.listdir(dir_input))
+            self.dir_input = dir_input
+
         elif mode == 'test':
             dir_input = join(dir_datasets, dataset_name, 'Test', 'A')
             self.list_paths_input = sorted(os.listdir(dir_input))
@@ -78,4 +88,3 @@ if __name__ == '__main__':
         size = Image.open(os.path.join(dir_image, path)).size
         print(size)
         list_sizes.append(size)
-
