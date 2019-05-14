@@ -121,7 +121,7 @@ if __name__ == '__main__':
                 for p in G_A.parameters():
                     p.requires_grad_(False)
 
-                for i, A_val, _ in enumerate(data_loader_test_A2B):
+                for i, (A_val, _) in enumerate(data_loader_test_A2B):
                     A_val = A_val.to(device)
 
                     fake_B = G_A(A_val)
@@ -140,7 +140,7 @@ if __name__ == '__main__':
                 for p in G_B.parameters():
                     p.requires_grad_(False)
 
-                for i, B_val, _ in enumerate(data_loader_test_B2A):
+                for i, (B_val, _) in enumerate(data_loader_test_B2A):
                     B_val = B_val.to(device)
 
                     fake_A = G_B(B_val)
